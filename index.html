@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0B6FB8">
+<title>श्री आरोग्य हॉस्पिटल — अपॉइंटमेंट</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700;800&display=swap');
+
+  :root{
+    --brand:#0B6FB8;
+    --brand-dark:#075184;
+    --brand-soft:#E8F2FB;
+    --accent:#0F9D8E;
+    --ink:#16232e;
+    --muted:#6b7d8a;
+    --line:#e4eaf0;
+    --bg:#F2F6FA;
+    --danger:#c0392b;
+    --shadow:0 6px 18px rgba(12,60,100,.09);
+    --tabbar-h:74px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:'Mukta',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+  input,select,textarea{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ---------- App bar ---------- */
+  .appbar{
+    position:sticky;top:0;z-index:40;
+    background:linear-gradient(150deg,#0C7BC9,#075184);color:#fff;
+    display:flex;align-items:center;gap:12px;
+    padding:14px 16px;box-shadow:0 4px 16px rgba(8,60,100,.28);
+  }
+  .ab-logo{width:44px;height:44px;flex:0 0 44px;border-radius:12px;overflow:hidden;background:#fff;display:grid;place-items:center;font-size:24px;box-shadow:0 2px 8px rgba(0,0,0,.2);}
+  .ab-title{flex:1;min-width:0;font-size:20px;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .ab-call{
+    width:46px;height:46px;flex:0 0 46px;border-radius:13px;
+    background:#fff;color:var(--brand-dark);font-size:22px;display:grid;place-items:center;
+    box-shadow:0 3px 10px rgba(0,0,0,.2);text-decoration:none;
+  }
+
+  /* ---------- Screens ---------- */
+  main{padding:0 0 var(--tabbar-h);}
+  .screen{display:none;padding:18px 16px 26px;max-width:640px;margin:0 auto;}
+  .screen.active{display:block;animation:fade .22s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .h1{font-size:23px;font-weight:800;color:var(--ink);margin-bottom:4px;}
+  .h1 .sub{display:block;font-size:14px;font-weight:600;color:var(--muted);margin-top:2px;}
+
+  /* ---------- Home ---------- */
+  .home-hero{background:#fff;border-radius:20px;padding:20px;box-shadow:var(--shadow);text-align:center;margin-bottom:16px;}
+  .hero-logo{width:92px;height:92px;margin:0 auto 12px;border-radius:24px;background:var(--brand-soft);display:grid;place-items:center;font-size:46px;box-shadow:0 6px 18px rgba(0,0,0,.10);}
+  .hero-name{font-size:26px;font-weight:800;line-height:1.2;color:var(--brand-dark);}
+  .hero-tag{font-size:15px;color:var(--muted);margin-top:6px;}
+  .ribbon{background:var(--brand);color:#fff;text-align:center;font-weight:800;font-size:15px;padding:10px 14px;border-radius:14px;margin-bottom:16px;}
+  .infolist{display:grid;gap:12px;margin-bottom:18px;}
+  .infocard{display:flex;align-items:center;gap:14px;background:#fff;border-radius:16px;padding:16px;box-shadow:var(--shadow);text-decoration:none;color:inherit;}
+  .infocard .ic{width:48px;height:48px;flex:0 0 48px;border-radius:14px;background:var(--brand-soft);display:grid;place-items:center;font-size:24px;}
+  .infocard .lbl{font-size:13.5px;color:var(--muted);font-weight:600;}
+  .infocard .val{font-size:18px;font-weight:700;color:var(--ink);word-break:break-word;}
+  .bigbtn{
+    width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:17px;border-radius:16px;font-weight:800;font-size:18px;box-shadow:var(--shadow);transition:transform .08s;
+  }
+  .bigbtn:active{transform:scale(.98);}
+  .bigbtn + .bigbtn{margin-top:12px;}
+  .bigbtn.wa{background:#25D366;color:#06301b;}
+  .bigbtn.map{background:#fff;color:var(--brand-dark);border:2px solid var(--brand-soft);}
+  .bigbtn.shop{background:var(--brand);color:#fff;}
+
+  /* ---------- Doctor card ---------- */
+  .doccard{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);padding:18px;margin-bottom:14px;}
+  .doccard.oos{opacity:.7;}
+  .doc-top{display:flex;gap:16px;align-items:center;}
+  .doc-av{width:76px;height:76px;flex:0 0 76px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;font-size:38px;}
+  .doc-nm{font-size:21px;font-weight:800;line-height:1.25;}
+  .doc-qual{font-size:15px;color:var(--muted);}
+  .doc-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .chip{background:var(--brand-soft);color:var(--brand-dark);font-size:14px;font-weight:700;padding:6px 12px;border-radius:999px;}
+  .chip.fee{background:#E4F6EF;color:#0B6B4E;}
+  .chip.off{background:#FDECEA;color:var(--danger);}
+  .doc-btn{width:100%;margin-top:16px;background:var(--brand);color:#fff;font-weight:800;font-size:17px;padding:15px;border-radius:14px;transition:transform .08s;}
+  .doc-btn:active{transform:scale(.98);}
+  .doc-btn:disabled{background:#c9d7e1;color:#eef4f8;}
+  .empty{padding:44px 20px;text-align:center;color:var(--muted);font-size:17px;}
+
+  /* ---------- Appointment ---------- */
+  .field{margin-bottom:14px;text-align:left;}
+  .field label{display:block;font-size:14px;font-weight:700;color:var(--muted);margin-bottom:6px;}
+  .field input,.field select,.field textarea{
+    width:100%;padding:14px;border-radius:13px;border:1.5px solid var(--line);
+    font-size:17px;background:#fff;color:var(--ink);
+  }
+  .field textarea{min-height:74px;resize:vertical;}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--brand);}
+  .panel{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);overflow:hidden;}
+  .apptline{background:#fff;border-radius:16px;padding:15px;box-shadow:var(--shadow);margin-bottom:12px;display:flex;justify-content:space-between;gap:12px;align-items:center;}
+  .apptline .an{font-size:17px;font-weight:800;}
+  .apptline .ad{font-size:14px;color:var(--muted);display:block;}
+  .apptline .acts{display:flex;gap:8px;flex:0 0 auto;}
+  .icon-btn{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--bg);border:1px solid var(--line);font-size:17px;}
+  .icon-btn.on{background:var(--brand-soft);border-color:#bcd9f0;color:var(--brand-dark);}
+  .icon-btn.del{color:var(--danger);}
+
+  /* ---------- Tab bar ---------- */
+  .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;height:var(--tabbar-h);background:#fff;border-top:1px solid var(--line);display:flex;box-shadow:0 -4px 18px rgba(0,0,0,.07);padding-bottom:env(safe-area-inset-bottom);}
+  .tabbtn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#8a9aa6;font-weight:700;font-size:13px;}
+  .tabbtn .ticon{font-size:24px;line-height:1;}
+  .tabbtn.active{color:var(--brand);}
+
+  /* ---------- Admin ---------- */
+  .login-wrap{max-width:380px;margin:8vh auto;padding:28px 22px;background:#fff;border-radius:22px;box-shadow:var(--shadow);text-align:center;}
+  .login-wrap .lock{font-size:44px;}
+  .login-wrap h2{margin:10px 0 4px;font-size:22px;}
+  .login-wrap p{color:var(--muted);font-size:15px;margin-bottom:18px;}
+  .btn-primary{width:100%;background:var(--brand);color:#fff;padding:16px;border-radius:14px;font-weight:800;font-size:18px;box-shadow:0 4px 14px rgba(11,111,184,.3);}
+  .btn-primary:active{transform:scale(.98);}
+  .login-err{color:var(--danger);font-size:15px;font-weight:600;margin-top:10px;min-height:18px;}
+  .section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:22px 0 12px;}
+  .section-head h3{font-size:19px;font-weight:800;color:var(--brand-dark);}
+  .btn-sm{padding:11px 16px;border-radius:12px;font-weight:800;font-size:15px;background:var(--brand);color:#fff;}
+  .btn-sm.ghost{background:#fff;color:var(--brand-dark);border:1.5px solid var(--line);}
+  .btn-sm.danger{background:#fdecea;color:var(--danger);}
+  .admin-note{background:#E8F2FB;border:1px solid #bcd9f0;border-radius:14px;padding:13px 15px;font-size:14px;color:#0a4b7c;margin-bottom:18px;line-height:1.55;}
+  .statusline{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#fff;border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-weight:700;font-size:16px;}
+  .pill{font-size:13.5px;font-weight:800;padding:5px 12px;border-radius:999px;background:#E4F6EF;color:#0B6B4E;}
+  .pill.no{background:#FDECEA;color:var(--danger);}
+  .ro-row{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:16px;}
+  .ro-row:last-child{border-bottom:none;}
+  .ro-row span{color:var(--muted);font-weight:600;}
+  .ro-row b{font-weight:700;text-align:right;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{position:fixed;inset:0;z-index:80;background:rgba(10,30,50,.55);display:flex;align-items:flex-end;justify-content:center;}
+  .modal{background:#fff;width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:24px 20px 28px;box-shadow:0 -10px 40px rgba(0,0,0,.3);animation:up .22s ease;max-height:92vh;overflow-y:auto;}
+  @keyframes up{from{transform:translateY(30px);opacity:.4}to{transform:translateY(0);opacity:1}}
+  .modal h3{font-size:20px;font-weight:800;margin-bottom:18px;color:var(--brand-dark);}
+  .modal-actions{display:flex;gap:10px;margin-top:8px;}
+  .modal-actions .btn-primary{flex:1;}
+  .modal-actions .btn-sm{flex:0 0 auto;padding:16px 20px;}
+
+  /* ---------- Toast ---------- */
+  .toast{position:fixed;left:50%;top:78px;transform:translateX(-50%) translateY(-100px);background:var(--ink);color:#fff;padding:13px 22px;border-radius:999px;font-size:15px;font-weight:700;z-index:120;opacity:0;transition:all .25s ease;box-shadow:0 8px 24px rgba(0,0,0,.3);max-width:90vw;text-align:center;}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+  @media(min-width:600px){
+    .modal-overlay{align-items:center;}
+    .modal{border-radius:24px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== APP BAR ===================== -->
+<header class="appbar">
+  <div class="ab-logo" id="abLogo">🏥</div>
+  <div class="ab-title" id="abTitle">श्री आरोग्य हॉस्पिटल</div>
+  <a class="ab-call" id="abCall" href="#">📞</a>
+</header>
+
+<main>
+
+  <!-- ============ SCREEN: HOSPITAL ============ -->
+  <section class="screen active" id="scr-home">
+    <div class="home-hero">
+      <div class="hero-logo">🏥</div>
+      <div class="hero-name" id="hName">श्री आरोग्य हॉस्पिटल</div>
+      <div class="hero-tag" id="hTag">विश्वासू डॉक्टर · आधुनिक सुविधा · २४x७ सेवा</div>
+    </div>
+
+    <div class="ribbon">⭐ अनुभवी डॉक्टर · वेळेत अपॉइंटमेंट · योग्य फी ⭐</div>
+
+    <div class="infolist">
+      <a class="infocard" id="hPhoneCard" href="#">
+        <div class="ic">📞</div>
+        <div><div class="lbl">फोन</div><div class="val" id="hPhone">+91 88308 99622</div></div>
+      </a>
+      <a class="infocard" id="hMapCard" href="#" target="_blank" rel="noopener">
+        <div class="ic">📍</div>
+        <div><div class="lbl">पत्ता</div><div class="val" id="hAddress">मुख्य रस्ता, शिवाजी चौक, पुणे — 411001</div></div>
+      </a>
+      <div class="infocard">
+        <div class="ic">🕒</div>
+        <div><div class="lbl">ओपीडी वेळ</div><div class="val" id="hHours">सकाळी 9:00 ते रात्री 8:00</div></div>
+      </div>
+    </div>
+
+    <button class="bigbtn shop" onclick="go('appt')">📅 अपॉइंटमेंट घ्या</button>
+    <a class="bigbtn wa" id="hWa" href="#">💬 WhatsApp वर संपर्क करा</a>
+    <a class="bigbtn map" id="hMap" href="#" target="_blank" rel="noopener">🗺️ Google Maps वर हॉस्पिटल</a>
+  </section>
+
+  <!-- ============ SCREEN: DOCTOR ============ -->
+  <section class="screen" id="scr-doctor">
+    <div class="h1">आमचे डॉक्टर</div>
+    <div id="doctorBody" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ============ SCREEN: APPOINTMENT ============ -->
+  <section class="screen" id="scr-appt">
+    <div class="h1">अपॉइंटमेंट</div>
+    <div id="apptBody" style="margin-top:14px"></div>
+  </section>
+
+  <!-- ============ SCREEN: ADMIN ============ -->
+  <section class="screen" id="scr-admin">
+    <div id="loginView" class="login-wrap">
+      <div class="lock">🔒</div>
+      <h2>ॲडमिन लॉगिन</h2>
+      <p>कृपया पासवर्ड टाका</p>
+      <div class="field">
+        <label for="pw">पासवर्ड</label>
+        <input type="password" id="pw" placeholder="पासवर्ड" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-primary" onclick="doLogin()">लॉगिन करा</button>
+      <div class="login-err" id="loginErr"></div>
+    </div>
+
+    <div id="panelView" class="hidden">
+      <div class="admin-note">ℹ️ हा डेमो ब्राउझरच्या LocalStorage मध्ये डेटा साठवतो — बदल तुमच्या या ब्राउझरमध्ये कायम राहतील आणि लगेच ग्राहकांच्या पेजवर दिसतील.</div>
+
+      <div class="section-head">
+        <h3>🩺 उपलब्धता व फी</h3>
+        <button class="btn-sm" onclick="saveDoctorSettings()">सेव्ह</button>
+      </div>
+      <div class="panel" style="padding:16px;">
+        <div class="field"><label>फी (₹)</label><input id="dFeeIn" type="number" min="0"></div>
+        <div class="field" style="margin-bottom:0"><label>उपलब्धता</label>
+          <select id="dAvailIn">
+            <option value="1">उपलब्ध</option>
+            <option value="0">सध्या उपलब्ध नाही</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-head"><h3>⚙️ इतर</h3></div>
+      <div class="panel" style="padding:16px;display:flex;flex-wrap:wrap;gap:10px;">
+        <button class="btn-sm ghost" onclick="changePassword()">🔑 पासवर्ड बदला</button>
+        <button class="btn-sm ghost" onclick="exportData()">⬇️ डेटा बॅकअप</button>
+        <button class="btn-sm danger" onclick="resetData()">♻️ सुरुवातीचा डेटा</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===================== TAB BAR ===================== -->
+<nav class="tabbar">
+  <button class="tabbtn active" data-tab="home" onclick="go('home')"><span class="ticon">🏥</span>हॉस्पिटल</button>
+  <button class="tabbtn" data-tab="doctor" onclick="go('doctor')"><span class="ticon">👨‍⚕️</span>डॉक्टर</button>
+  <button class="tabbtn" data-tab="appt" onclick="go('appt')"><span class="ticon">📅</span>अपॉइंटमेंट</button>
+  <button class="tabbtn" data-tab="admin" onclick="go('admin')"><span class="ticon">🔒</span>ॲडमिन</button>
+</nav>
+
+<!-- ===================== MODAL ===================== -->
+<div id="modal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3 id="mTitle">माहिती</h3>
+    <div id="mBody"></div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="mSave" onclick="modalSave()">सेव्ह करा</button>
+      <button class="btn-sm ghost" onclick="closeModal()">रद्द</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+/* ============================================================
+   Single-doctor hospital appointment app (vanilla JS, LocalStorage)
+   ============================================================ */
+const STORAGE_KEY = 'hospital_store_v2';
+const PATIENT_KEY = 'hospital_patient_v2';
+const APPTS_KEY   = 'hospital_appts_v2';
+const DEFAULT_PASSWORD = 'Arogya@7391';
+const SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00',
+               '16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
+
+function uid(){ return Math.random().toString(36).slice(2,9); }
+
+const DEFAULT_DATA = {
+  hospital:{
+    name:'श्री आरोग्य हॉस्पिटल',
+    tagline:'विश्वासू डॉक्टर · आधुनिक सुविधा · २४x७ सेवा',
+    phone:'+91 88308 99622',
+    whatsapp:'918830899622',
+    address:'मुख्य रस्ता, शिवाजी चौक, पुणे — 411001',
+    mapsUrl:'https://www.google.com/maps/search/?api=1&query=Shivaji+Chowk+Pune',
+    hours:'ओपीडी: सकाळी 9:00 ते रात्री 8:00'
+  },
+  password: DEFAULT_PASSWORD,
+  doctor:{
+    name:'डॉ. राहुल पाटील',
+    speciality:'सामान्य वैद्यक',
+    qual:'MBBS, MD',
+    timing:'सकाळी 9:00 - 1:00 व सायं. 4:00 - 8:00',
+    fee:300,
+    available:true
+  }
+};
+
+let data = load();
+let patient = loadPatient();
+let myAppts = loadAppts();
+let isLoggedIn = false;
+let screen = 'home';
+
+/* ---------- persistence ---------- */
+function load(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return structuredClone(DEFAULT_DATA);
+    const p = JSON.parse(raw);
+    if(!p.hospital || !p.doctor) throw 0;
+    if(p.doctor.available==null) p.doctor.available = true;
+    if(p.password === 'admin123') p.password = DEFAULT_DATA.password;   // जुना डीफॉल्ट पासवर्ड बदलला
+    p.hospital.phone = DEFAULT_DATA.hospital.phone;
+    p.hospital.whatsapp = DEFAULT_DATA.hospital.whatsapp;
+    // name / speciality / education / timing are fixed in the app;
+    // fee and availability are changed from the admin panel
+    p.doctor = p.doctor || {};
+    p.doctor.name = DEFAULT_DATA.doctor.name;
+    p.doctor.speciality = DEFAULT_DATA.doctor.speciality;
+    p.doctor.qual = DEFAULT_DATA.doctor.qual;
+    p.doctor.timing = DEFAULT_DATA.doctor.timing;
+    if(p.doctor.fee == null) p.doctor.fee = DEFAULT_DATA.doctor.fee;
+    if(p.doctor.available == null) p.doctor.available = DEFAULT_DATA.doctor.available;
+    return p;
+  }catch(e){ return structuredClone(DEFAULT_DATA); }
+}
+function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){ toast('डेटा सेव्ह झाला नाही'); } }
+function loadPatient(){ try{ return JSON.parse(localStorage.getItem(PATIENT_KEY)) || {name:'',phone:'',age:''}; }catch(e){ return {name:'',phone:'',age:''}; } }
+function savePatient(){ try{ localStorage.setItem(PATIENT_KEY, JSON.stringify(patient)); }catch(e){} }
+function setPatient(k,v){ patient[k] = v; savePatient(); }
+function loadAppts(){ try{ return JSON.parse(localStorage.getItem(APPTS_KEY)) || []; }catch(e){ return []; } }
+function saveAppts(){ try{ localStorage.setItem(APPTS_KEY, JSON.stringify(myAppts)); }catch(e){} }
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._tm); t._tm = setTimeout(()=>t.classList.remove('show'), 1900);
+}
+function waLink(text){
+  const num = String(data.hospital.whatsapp).replace(/[^0-9]/g,'');
+  return 'https://wa.me/' + num + '?text=' + encodeURIComponent(text);
+}
+function todayStr(){ const t = new Date(); return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); }
+function fmtDate(s){ if(!s) return ''; const p = s.split('-'); return p.length===3 ? (p[2]+'/'+p[1]+'/'+p[0]) : s; }
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+function go(name){
+  screen = name;
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active', s.id==='scr-'+name));
+  document.querySelectorAll('.tabbtn').forEach(b=>b.classList.toggle('active', b.dataset.tab===name));
+  document.getElementById('abTitle').textContent = data.hospital.name;
+  window.scrollTo(0,0);
+  if(name==='doctor') renderDoctor();
+  if(name==='appt') renderAppt();
+  if(name==='admin') renderAdminScreen();
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderHospital(){
+  const h = data.hospital;
+  document.getElementById('hName').textContent = h.name;
+  document.getElementById('hTag').textContent = h.tagline;
+  document.getElementById('hPhone').textContent = h.phone;
+  document.getElementById('hAddress').textContent = h.address;
+  document.getElementById('hHours').textContent = h.hours;
+  document.getElementById('abTitle').textContent = h.name;
+  document.getElementById('hPhoneCard').href = 'tel:' + String(h.phone).replace(/[^0-9+]/g,'');
+  document.getElementById('abCall').href = 'tel:' + String(h.phone).replace(/[^0-9+]/g,'');
+  const map = h.mapsUrl || ('https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(h.address));
+  document.getElementById('hMap').href = map;
+  document.getElementById('hMapCard').href = map;
+  document.getElementById('hWa').href = waLink('नमस्कार, ' + h.name + ' — मला माहिती हवी आहे.');
+}
+
+function doctorCardHtml(){
+  const dc = data.doctor;
+  return '<div class="doccard'+(dc.available?'':' oos')+'">'+
+    '<div class="doc-top">'+
+      '<div class="doc-av">👨‍⚕️</div>'+
+      '<div><div class="doc-nm">'+esc(dc.name)+'</div>'+
+      '<div class="doc-qual">'+esc(dc.speciality)+' · '+esc(dc.qual)+'</div></div>'+
+    '</div>'+
+    '<div class="doc-meta">'+
+      '<span class="chip">🕒 '+esc(dc.timing)+'</span>'+
+      '<span class="chip fee">₹'+esc(dc.fee)+' फी</span>'+
+      (dc.available ? '' : '<span class="chip off">सध्या उपलब्ध नाही</span>')+
+    '</div>'+
+    '<button class="doc-btn" '+(dc.available?'':'disabled')+' onclick="go(\'appt\')">'+
+      (dc.available ? '📅 अपॉइंटमेंट घ्या' : 'सध्या उपलब्ध नाही')+
+    '</button>'+
+  '</div>';
+}
+
+function renderDoctor(){
+  document.getElementById('doctorBody').innerHTML = doctorCardHtml();
+}
+
+function apptFormHtml(){
+  return '<div class="panel" style="padding:16px;">'+
+    '<div class="field"><label>रुग्णाचे नाव *</label><input id="aName" value="'+esc(patient.name||'')+'" placeholder="रुग्णाचे पूर्ण नाव" oninput="setPatient(\'name\',this.value)"></div>'+
+    '<div class="field"><label>मोबाईल नंबर *</label><input id="aPhone" type="tel" inputmode="numeric" maxlength="10" value="'+esc(patient.phone||'')+'" placeholder="10 अंकी मोबाईल नंबर" oninput="setPatient(\'phone\',this.value)"></div>'+
+    '<div class="field"><label>वय</label><input id="aAge" inputmode="numeric" value="'+esc(patient.age||'')+'" placeholder="वय (वर्षे)" oninput="setPatient(\'age\',this.value)"></div>'+
+    '<div class="field"><label>तारीख *</label><input id="aDate" type="date" min="'+todayStr()+'" value="'+todayStr()+'"></div>'+
+    '<div class="field"><label>वेळ *</label><select id="aTime">'+SLOTS.map(s=>'<option>'+s+'</option>').join('')+'</select></div>'+
+    '<div class="field" style="margin-bottom:0"><label>तक्रार / कारण</label><textarea id="aNote" placeholder="उदा. ताप, खोकला, डोकेदुखी"></textarea></div>'+
+  '</div>';
+}
+
+function apptListHtml(){
+  if(!myAppts.length) return '<div class="empty" style="padding:22px">अजून कोणतीही अपॉइंटमेंट नाही.</div>';
+  return myAppts.map(a=>
+    '<div class="apptline">'+
+      '<div><div class="an">'+esc(a.name)+'</div>'+
+      '<span class="ad">'+fmtDate(a.date)+' · '+esc(a.time)+'</span></div>'+
+      '<div class="acts">'+
+        '<button class="icon-btn" title="पुन्हा पाठवा" onclick="resendAppt(\''+a.id+'\')">💬</button>'+
+        '<button class="icon-btn del" title="हटवा" onclick="delAppt(\''+a.id+'\')">🗑️</button>'+
+      '</div>'+
+    '</div>'
+  ).join('');
+}
+
+function renderAppt(){
+  const dc = data.doctor;
+  document.getElementById('apptBody').innerHTML =
+    doctorCardHtml() +
+    apptFormHtml() +
+    (dc.available
+      ? '<button class="bigbtn wa" onclick="submitAppt()">💬 WhatsApp वर अपॉइंटमेंट पाठवा</button>'
+      : '<div class="admin-note" style="margin-top:12px">डॉक्टर सध्या उपलब्ध नाहीत. कृपया नंतर प्रयत्न करा किंवा हॉस्पिटलला फोन करा.</div>') +
+    '<div class="h1" style="font-size:19px;margin:24px 0 12px">माझ्या अपॉइंटमेंट</div>'+
+    apptListHtml();
+}
+
+function submitAppt(){
+  const dc = data.doctor;
+  if(!dc.available){ toast('डॉक्टर सध्या उपलब्ध नाहीत'); return; }
+  const name = (patient.name||'').trim();
+  const phone = (patient.phone||'').replace(/[^0-9]/g,'');
+  const age = (patient.age||'').trim();
+  const date = document.getElementById('aDate').value;
+  const time = document.getElementById('aTime').value;
+  const note = (document.getElementById('aNote').value || '').trim();
+  if(!name){ toast('रुग्णाचे नाव टाका'); return; }
+  if(phone.length !== 10){ toast('कृपया 10 अंकी मोबाईल नंबर टाका'); return; }
+  if(!date){ toast('कृपया तारीख निवडा'); return; }
+  patient.phone = phone; savePatient();
+  const rec = {id:uid(), name, phone, age, date, time, note};
+  myAppts.unshift(rec); saveAppts();
+  window.open(waLink(apptMsg(rec)), '_blank');
+  renderAppt();
+  toast('अपॉइंटमेंट पाठवली ✅');
+}
+function apptMsg(a){
+  const dc = data.doctor;
+  let text = 'नमस्कार ' + data.hospital.name + ',\nमला अपॉइंटमेंट घ्यायची आहे.\n\n';
+  text += 'डॉक्टर: ' + dc.name + (dc.qual ? ' (' + dc.qual + ')' : '') + '\n';
+  if(dc.speciality) text += 'विभाग: ' + dc.speciality + '\n';
+  text += 'रुग्णाचे नाव: ' + a.name + '\n';
+  text += 'मोबाईल: ' + a.phone + '\n';
+  if(a.age) text += 'वय: ' + a.age + '\n';
+  text += 'तारीख: ' + fmtDate(a.date) + '   वेळ: ' + a.time + '\n';
+  if(a.note) text += 'तक्रार: ' + a.note + '\n';
+  return text;
+}
+function resendAppt(id){
+  const a = myAppts.find(x=>x.id===id); if(!a) return;
+  window.open(waLink(apptMsg(a)), '_blank');
+}
+function delAppt(id){
+  if(!confirm('ही अपॉइंटमेंट हटवायची?')) return;
+  myAppts = myAppts.filter(x=>x.id!==id); saveAppts(); renderAppt(); toast('अपॉइंटमेंट हटवली');
+}
+
+/* ============================================================
+   ADMIN
+   ============================================================ */
+function renderAdminScreen(){
+  document.getElementById('loginView').classList.toggle('hidden', isLoggedIn);
+  document.getElementById('panelView').classList.toggle('hidden', !isLoggedIn);
+  if(isLoggedIn) renderAdmin();
+}
+function doLogin(){
+  const pw = document.getElementById('pw').value;
+  const err = document.getElementById('loginErr');
+  if(pw === data.password){
+    isLoggedIn = true; err.textContent=''; document.getElementById('pw').value='';
+    renderAdminScreen(); toast('लॉगिन झाले ✅');
+  }else{
+    err.textContent = 'चुकीचा पासवर्ड. पुन्हा प्रयत्न करा.';
+  }
+}
+function renderAdmin(){
+  const dc = data.doctor;
+  document.getElementById('dFeeIn').value = dc.fee;
+  document.getElementById('dAvailIn').value = dc.available ? '1' : '0';
+}
+function saveDoctorSettings(){
+  const feeRaw = document.getElementById('dFeeIn').value.trim();
+  data.doctor.fee = (feeRaw==='' || isNaN(Number(feeRaw))) ? 0 : Number(feeRaw);
+  data.doctor.available = document.getElementById('dAvailIn').value === '1';
+  save(); renderDoctor(); renderAppt(); renderAdmin();
+  toast('सेव्ह झाले ✅');
+}
+
+/* ---------- modal ---------- */
+let _modalSave = null;
+function openModal(title, bodyHtml, onSave){
+  document.getElementById('mTitle').textContent = title;
+  document.getElementById('mBody').innerHTML = bodyHtml;
+  _modalSave = onSave;
+  document.getElementById('modal').classList.remove('hidden');
+}
+function closeModal(){ document.getElementById('modal').classList.add('hidden'); _modalSave=null; }
+function modalSave(){ if(_modalSave && _modalSave()!==false) closeModal(); }
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') closeModal(); });
+
+/* ---------- misc ---------- */
+function changePassword(){
+  const np = prompt('नवीन पासवर्ड टाका:');
+  if(np===null) return;
+  if(np.trim().length<4){ toast('पासवर्ड कमीत कमी 4 अक्षरी असावा'); return; }
+  data.password = np.trim(); save(); toast('पासवर्ड बदलला ✅');
+}
+function exportData(){
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'hospital-backup.json';
+  a.click(); URL.revokeObjectURL(a.href);
+  toast('बॅकअप डाउनलोड झाला ⬇️');
+}
+function resetData(){
+  if(!confirm('सर्व बदल हटवून सुरुवातीचा डेटा परत आणायचा?')) return;
+  data = structuredClone(DEFAULT_DATA);
+  save(); renderHospital(); renderDoctor(); renderAppt(); renderAdmin();
+  toast('सुरुवातीचा डेटा परत आणला ♻️');
+}
+
+/* ---------- boot ---------- */
+renderHospital();
+renderDoctor();
+renderAppt();
+go('home');
+</script>
+</body>
+</html>
