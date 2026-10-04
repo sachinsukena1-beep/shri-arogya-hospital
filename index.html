@@ -274,6 +274,8 @@
 
 <div id="toast" class="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
 /* ============================================================
    Single-doctor hospital appointment app (vanilla JS, LocalStorage)
@@ -282,6 +284,13 @@ const STORAGE_KEY = 'hospital_store_v2';
 const PATIENT_KEY = 'hospital_patient_v2';
 const APPTS_KEY   = 'hospital_appts_v2';
 const DEFAULT_PASSWORD = 'Arogya@7391';
+
+/* ---------- Firebase Realtime Database ----------
+   databaseURL रिकामा ठेवल्यास ॲप फक्त localStorage वापरेल. */
+const FIREBASE_CONFIG = {
+  databaseURL: "https://sach-1ec67-default-rtdb.asia-southeast1.firebasedatabase.app/"
+};
+const FB_PATH = 'hospital';   // या ॲपचा डेटा या ठिकाणी साठेल
 const SLOTS = ['09:00','09:30','10:00','10:30','11:00','11:30','12:00','12:30','13:00',
                '16:00','16:30','17:00','17:30','18:00','18:30','19:00','19:30','20:00'];
 
@@ -315,29 +324,67 @@ let isLoggedIn = false;
 let screen = 'home';
 
 /* ---------- persistence ---------- */
+function normalizeData(p){
+  if(!p || !p.hospital || !p.doctor) return null;
+  if(p.doctor.available==null) p.doctor.available = true;
+  if(p.password == null || p.password === 'admin123') p.password = DEFAULT_DATA.password;   // जुना डीफॉल्ट पासवर्ड बदलला
+  p.hospital.phone = DEFAULT_DATA.hospital.phone;
+  p.hospital.whatsapp = DEFAULT_DATA.hospital.whatsapp;
+  // name / speciality / education / timing are fixed in the app; fee and availability are changed from the admin panel
+  p.doctor.name = DEFAULT_DATA.doctor.name;
+  p.doctor.speciality = DEFAULT_DATA.doctor.speciality;
+  p.doctor.qual = DEFAULT_DATA.doctor.qual;
+  p.doctor.timing = DEFAULT_DATA.doctor.timing;
+  if(p.doctor.fee == null) p.doctor.fee = DEFAULT_DATA.doctor.fee;
+  if(p.doctor.available == null) p.doctor.available = DEFAULT_DATA.doctor.available;
+  return p;
+}
 function load(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
     if(!raw) return structuredClone(DEFAULT_DATA);
-    const p = JSON.parse(raw);
-    if(!p.hospital || !p.doctor) throw 0;
-    if(p.doctor.available==null) p.doctor.available = true;
-    if(p.password === 'admin123') p.password = DEFAULT_DATA.password;   // जुना डीफॉल्ट पासवर्ड बदलला
-    p.hospital.phone = DEFAULT_DATA.hospital.phone;
-    p.hospital.whatsapp = DEFAULT_DATA.hospital.whatsapp;
-    // name / speciality / education / timing are fixed in the app;
-    // fee and availability are changed from the admin panel
-    p.doctor = p.doctor || {};
-    p.doctor.name = DEFAULT_DATA.doctor.name;
-    p.doctor.speciality = DEFAULT_DATA.doctor.speciality;
-    p.doctor.qual = DEFAULT_DATA.doctor.qual;
-    p.doctor.timing = DEFAULT_DATA.doctor.timing;
-    if(p.doctor.fee == null) p.doctor.fee = DEFAULT_DATA.doctor.fee;
-    if(p.doctor.available == null) p.doctor.available = DEFAULT_DATA.doctor.available;
-    return p;
+    return normalizeData(JSON.parse(raw)) || structuredClone(DEFAULT_DATA);
   }catch(e){ return structuredClone(DEFAULT_DATA); }
 }
-function save(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){ toast('डेटा सेव्ह झाला नाही'); } }
+function save(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){ toast('डेटा सेव्ह झाला नाही'); }
+  pushToCloud();
+}
+/* ---------- Firebase Realtime Database sync ---------- */
+let _fbDb = null;
+function initFirebase(){
+  if(!FIREBASE_CONFIG.databaseURL) return null;
+  if(typeof firebase === 'undefined' || !firebase.initializeApp) return null;
+  try{
+    if(!firebase.apps || !firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+    _fbDb = firebase.database();
+    return _fbDb;
+  }catch(e){ return null; }
+}
+async function pushToCloud(){
+  if(!_fbDb) return;
+  try{
+    await _fbDb.ref(FB_PATH).set({ hospital:data.hospital, doctor:data.doctor });
+  }catch(e){ toast('ऑनलाईन सेव्ह झाले नाही — स्थानिक कॉपी जतन आहे'); }
+}
+function subscribeCloud(){
+  if(!_fbDb) return;
+  _fbDb.ref(FB_PATH).on('value', function(snap){
+    const v = snap.val();
+    if(!v) return;
+    const parsed = normalizeData(v);
+    if(!parsed) return;
+    parsed.password = data.password;   // पासवर्ड क्लाउडमध्ये ठेवत नाही; स्थानिकच ठेवतो
+    data = parsed;
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+    renderHospital(); renderDoctor(); renderAppt();
+    if(screen==='admin') renderAdminScreen();
+  }, function(err){ /* परवानगी / नेटवर्क अडचण — स्थानिक डेटाच वापर */ });
+}
+function bootCloud(){
+  if(!initFirebase()) return;
+  subscribeCloud();
+}
 function loadPatient(){ try{ return JSON.parse(localStorage.getItem(PATIENT_KEY)) || {name:'',phone:'',age:''}; }catch(e){ return {name:'',phone:'',age:''}; } }
 function savePatient(){ try{ localStorage.setItem(PATIENT_KEY, JSON.stringify(patient)); }catch(e){} }
 function setPatient(k,v){ patient[k] = v; savePatient(); }
@@ -561,6 +608,7 @@ renderHospital();
 renderDoctor();
 renderAppt();
 go('home');
+bootCloud();
 </script>
 </body>
 </html>
